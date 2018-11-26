@@ -29,10 +29,12 @@
 	--current-site-switch-sites-background: #{$gray-lighten-30};
 	--profile-gravatar-user-secondary-info-color: #{$gray-darken-20};
 
+
+	--color-warning: #{$alert-yellow};
+	--color-success: #{$alert-green};
+
 	--badge-warning-color: #{$gray-dark};
-	--badge-warning-background-color: #{$alert-yellow};
 	--badge-success-color: #{$gray-dark};
-	--badge-success-background-color: #{$alert-green};
 }
 
 //additional color schemes
