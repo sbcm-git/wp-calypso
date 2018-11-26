@@ -21135,7 +21135,7 @@
     },
     "underscore.string": {
       "version": "3.0.3",
-      "resolved": "https://registry.npmjs.org/underscore.string/-/underscore.string-3.0.3.tgz",
+      "resolved": "http://registry.npmjs.org/underscore.string/-/underscore.string-3.0.3.tgz",
       "integrity": "sha1-Rhe4waJQz25QZPu7Nj0PqWzxRVI="
     },
     "underscore.string.fp": {
