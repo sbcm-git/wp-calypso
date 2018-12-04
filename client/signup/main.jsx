@@ -244,6 +244,13 @@ class Signup extends React.Component {
 		}
 	};
 
+	recordExcludeStepEvent = ( step, value ) => {
+		analytics.tracks.recordEvent( 'calypso_signup_actions_exclude_step', {
+			step,
+			value,
+		} );
+	};
+
 	submitQueryDependencies = () => {
 		if ( isEmpty( this.props.initialContext && this.props.initialContext.query ) ) {
 			return;
@@ -286,10 +293,7 @@ class Signup extends React.Component {
 
 			fulfilledSteps.push( siteTopicStepName );
 
-			analytics.tracks.recordEvent( 'calypso_signup_actions_exclude_step', {
-				step: siteTopicStepName,
-				value: vertical,
-			} );
+			this.recordExcludeStepEvent( siteTopicStepName, vertical );
 		}
 
 		//`site_type` query parameter
@@ -303,6 +307,8 @@ class Signup extends React.Component {
 			this.props.submitSiteType( siteTypeValue );
 
 			fulfilledSteps.push( siteTypeStepName );
+
+			this.recordExcludeStepEvent( siteTypeStepName, siteTypeValue );
 		}
 
 		flows.excludeSteps( fulfilledSteps );
