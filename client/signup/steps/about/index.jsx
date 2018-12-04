@@ -187,7 +187,6 @@ class AboutStep extends Component {
 		//Inputs
 		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 		const userExperienceInput = this.state.userExperience;
-		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
 		const eventAttributes = {};
 
 		//Site Title
@@ -199,17 +198,15 @@ class AboutStep extends Component {
 		eventAttributes.site_title = siteTitleInput || 'N/A';
 
 		//Site Topic
-		const englishSiteTopicInput = this.state.hasPrepopulatedVertical
-			? this.state.siteTopicValue
-			: toSiteTopicSlug( this.state.siteTopicValue );
+		const siteTopicSlug = toSiteTopicSlug( this.state.siteTopicValue );
 
-		eventAttributes.site_topic = englishSiteTopicInput || 'N/A';
+		eventAttributes.site_topic = siteTopicSlug || 'N/A';
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
 			value: eventAttributes.site_topic,
 		} );
 
 		this.props.setSurvey( {
-			vertical: englishSiteTopicInput,
+			vertical: siteTopicSlug,
 			otherText: '',
 			siteType: designType,
 		} );
@@ -293,7 +290,7 @@ class AboutStep extends Component {
 				themeSlugWithRepo: themeRepo,
 				siteTitle: siteTitleValue,
 				designType: designType,
-				surveyQuestion: siteTopicInput,
+				surveyQuestion: siteTopicSlug,
 			}
 		);
 
