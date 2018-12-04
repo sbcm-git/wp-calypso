@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React from 'react';
-import debug from 'debug';
+import debugFactory from 'debug';
 import config, { isEnabled } from 'config';
 import { has, uniqueId } from 'lodash';
 import { setLocaleData } from '@wordpress/i18n';
@@ -20,6 +20,8 @@ import { EDITOR_START } from 'state/action-types';
 import { initGutenberg } from './init';
 import { requestFromUrl } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
+
+const debug = debugFactory( 'calypso:gutenberg:controller' );
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/gutenberg/post/' ) ) {
