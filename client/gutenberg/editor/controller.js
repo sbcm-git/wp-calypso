@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import debug from 'debug';
-import config, { isEnabled } from 'config';
+import config from 'config';
 import { has, uniqueId } from 'lodash';
 import { setLocaleData } from '@wordpress/i18n';
 
@@ -48,13 +48,11 @@ export const loadTranslations = ( context, next ) => {
 			name: 'default',
 			url: 'gutenberg',
 		},
-	];
-	if ( isEnabled( 'gutenberg/block/jetpack-preset' ) ) {
-		domains.push( {
+		{
 			name: 'jetpack',
 			url: 'jetpack-gutenberg-blocks',
-		} );
-	}
+		},
+	];
 
 	const state = context.store.getState();
 	const localeSlug = getCurrentLocaleSlug( state );
