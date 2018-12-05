@@ -20,6 +20,7 @@ import { EDITOR_START } from 'state/action-types';
 import { initGutenberg } from './init';
 import { requestFromUrl } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
+import { getRouteHistory } from 'state/ui/action-log/selectors';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -120,6 +121,12 @@ export const post = async ( context, next ) => {
 	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
 
 	let state = context.store.getState();
+
+	const routeHistory = getRouteHistory( state );
+	if ( routeHistory.length > 1 ) {
+		window.location.reload();
+	}
+
 	let siteId = getSelectedSiteId( state );
 	if ( ! siteId ) {
 		siteId = await waitForSelectedSiteId( context );
