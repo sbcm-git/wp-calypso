@@ -1,24 +1,31 @@
 /** @format */
+
 /**
  * External dependencies
  */
 import React from 'react';
+import debug from 'debug';
+import config, { isEnabled } from 'config';
 import { has, uniqueId } from 'lodash';
+import { setLocaleData } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { EDITOR_START } from 'state/action-types';
 import { initGutenberg } from './init';
+import { requestFromUrl } from 'state/data-getters';
+import { waitForData } from 'state/data-layer/http-data';
 
 function determinePostType( context ) {
-	if ( context.path.startsWith( '/gutenberg/post/' ) ) {
+	if ( context.path.startsWith( '/block-editor/post/' ) ) {
 		return 'post';
 	}
-	if ( context.path.startsWith( '/gutenberg/page/' ) ) {
+	if ( context.path.startsWith( '/block-editor/page/' ) ) {
 		return 'page';
 	}
 
@@ -34,6 +41,59 @@ function getPostID( context ) {
 	// both post and site are in the path
 	return parseInt( context.params.post, 10 );
 }
+
+export const loadTranslations = ( context, next ) => {
+	const domains = [
+		{
+			name: 'default',
+			url: 'gutenberg',
+		},
+	];
+	if ( isEnabled( 'gutenberg/block/jetpack-preset' ) ) {
+		domains.push( {
+			name: 'jetpack',
+			url: 'jetpack-gutenberg-blocks',
+		} );
+	}
+
+	const state = context.store.getState();
+	const localeSlug = getCurrentLocaleSlug( state );
+
+	// We don't need to localize English
+	if ( ! localeSlug || localeSlug === config( 'i18n_default_locale_slug' ) ) {
+		return next();
+	}
+
+	const query = domains.reduce( ( currentQuery, domain ) => {
+		const { name, url } = domain;
+		const languageFileUrl = `https://widgets.wp.com/languages/${ url }/${ localeSlug }.json?t=2`;
+		return {
+			...currentQuery,
+			[ name ]: () => requestFromUrl( languageFileUrl ),
+		};
+	}, {} );
+
+	waitForData( query ).then( responses => {
+		Object.entries( responses ).forEach( ( [ domain, { state: requestState, data } ] ) => {
+			if ( requestState === 'failure' ) {
+				debug(
+					`Encountered an error loading locale file for domain ${ domain } and locale ${ localeSlug }. Falling back to English.`
+				);
+			} else if ( data ) {
+				const localeData = {
+					'': {
+						domain,
+						lang: localeSlug,
+					},
+					...data.body,
+				};
+				setLocaleData( localeData, domain );
+			}
+		} );
+
+		next();
+	} );
+};
 
 function waitForSelectedSiteId( context ) {
 	return new Promise( resolve => {

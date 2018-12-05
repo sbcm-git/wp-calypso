@@ -22,7 +22,7 @@
 		"apple-pay": true,
 		"blogger-plan": false,
 		"comments/management/threaded-view": false,
-		"calypsoify/gutenberg": true,
+		"calypsoify/gutenberg": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
@@ -181,7 +181,6 @@
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/store-on-non-atomic-sites": true,
-		"wordads/daily-stats": true,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",

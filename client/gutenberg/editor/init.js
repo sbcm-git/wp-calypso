@@ -1,10 +1,13 @@
 /** @format */
-
 /**
  * External dependencies
  */
-import { use, plugins, dispatch } from '@wordpress/data';
 import { once } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
+import { use, plugins, dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
