@@ -1,3 +1,10 @@
+3.0.0 / 2018-12-05
+==================
+
+  * Move source into [Calypso](https://github.com/Automattic/wp-calypso).
+  * Remove browser build from module.
+  * Include esm and commonjs in module.
+
 2.0.1 / 2017-11-08
 ==================
 
