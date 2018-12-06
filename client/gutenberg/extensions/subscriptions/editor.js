@@ -10,6 +10,7 @@ import { Fragment } from '@wordpress/element';
  */
 //import './editor.scss';
 import edit from './edit';
+import save from './save';
 import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
 import registerJetpackBlock from '../presets/jetpack/utils/register-jetpack-block';
 import renderMaterialIcon from 'gutenberg/extensions/presets/jetpack/utils/render-material-icon';
@@ -41,7 +42,7 @@ export const settings = {
 		show_subscribers_total: { type: 'boolean', default: false },
 	},
 	edit,
-	save: () => null,
+	save,
 };
 
 registerJetpackBlock( name, settings );
