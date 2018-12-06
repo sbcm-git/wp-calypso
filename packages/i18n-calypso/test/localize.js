@@ -5,22 +5,18 @@
  *
  */
 import React from 'react';
-import { shallow } from 'enzyme';
+import ShallowRenderer from 'react-test-renderer/shallow';
 
 /**
  * Internal dependencies
  */
 import i18n, { localize } from '../src';
 
-const emptyRender = function() {
-	return null;
-};
-
-describe( 'localize()', function() {
-	it( 'should be named using the variable name of the composed component', function() {
+describe( 'localize()', () => {
+	it( 'should be named using the variable name of the composed component', () => {
 		class MyComponent extends React.Component {
 			render() {
-				return emptyRender();
+				return null;
 			}
 		}
 
@@ -29,8 +25,8 @@ describe( 'localize()', function() {
 		expect( LocalizedComponent.displayName ).toBe( 'Localized(MyComponent)' );
 	} );
 
-	it( 'should be named using the displayName of the composed component', function() {
-		const MyComponent = () => emptyRender();
+	it( 'should be named using the displayName of the composed component', () => {
+		const MyComponent = () => null;
 		MyComponent.displayName = 'MyComponent';
 
 		const LocalizedComponent = localize( MyComponent );
@@ -38,24 +34,26 @@ describe( 'localize()', function() {
 		expect( LocalizedComponent.displayName ).toBe( 'Localized(MyComponent)' );
 	} );
 
-	it( 'should be named using the name of the composed function component', function() {
-		function MyComponent() {}
+	it( 'should be named using the name of the composed function component', () => {
+		function MyComponent() {
+			return null;
+		}
 
 		const LocalizedComponent = localize( MyComponent );
 
 		expect( LocalizedComponent.displayName ).toBe( 'Localized(MyComponent)' );
 	} );
 
-	it( 'should provide translate, moment, locale and numberFormat props to rendered child', function() {
-		const MyComponent = () => emptyRender();
-		const LocalizedComponent = localize( MyComponent );
+	it( 'should provide translate, moment, locale and numberFormat props to rendered child', () => {
+		const renderer = new ShallowRenderer();
+		const LocalizedComponent = localize( () => null );
 
-		const mounted = shallow( React.createElement( LocalizedComponent ) );
-		const props = mounted.find( MyComponent ).props();
+		renderer.render( <LocalizedComponent /> );
+		const result = renderer.getRenderOutput();
 
-		expect( props.translate ).toBeInstanceOf( Function );
-		expect( props.moment ).toBeInstanceOf( Function );
-		expect( props.numberFormat ).toBeInstanceOf( Function );
-		expect( props.locale ).toBe( i18n.getLocaleSlug() );
+		expect( result.props.translate ).toBeInstanceOf( Function );
+		expect( result.props.moment ).toBeInstanceOf( Function );
+		expect( result.props.numberFormat ).toBeInstanceOf( Function );
+		expect( result.props.locale ).toBe( i18n.getLocaleSlug() );
 	} );
 } );
