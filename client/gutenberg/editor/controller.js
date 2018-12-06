@@ -6,6 +6,7 @@
 import React from 'react';
 import debug from 'debug';
 import config, { isEnabled } from 'config';
+import page from 'page';
 import { has, uniqueId } from 'lodash';
 import { setLocaleData } from '@wordpress/i18n';
 
@@ -15,6 +16,7 @@ import { setLocaleData } from '@wordpress/i18n';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import isGutenbergEnabled from 'state/selectors/is-calypsoify-gutenberg-enabled';
 import { EDITOR_START } from 'state/action-types';
 import { requestFromUrl } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
@@ -86,6 +88,21 @@ export const loadTranslations = store => {
 			}
 		} );
 	} );
+};
+
+export const redirect = async ( context, next ) => {
+	let state = context.store.getState();
+	let siteId = getSelectedSiteId( state );
+	if ( ! siteId ) {
+		siteId = await waitForSelectedSiteId( context );
+		state = context.store.getState();
+	}
+
+	if ( ! isGutenbergEnabled( state, siteId ) ) {
+		page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
+	}
+
+	next();
 };
 
 export const post = async ( context, next ) => {
