@@ -1,6 +1,8 @@
-var React = require( 'react' ),
-	assign = require( 'lodash.assign' ),
-	createClass = require( 'create-react-class' );
+/** @format */
+
+import React from 'react';
+import assign from 'lodash.assign';
+import createClass from 'create-react-class';
 
 /**
  * Localize a React component
@@ -11,13 +13,13 @@ module.exports = function( i18n ) {
 	var i18nProps = {
 		moment: i18n.moment,
 		numberFormat: i18n.numberFormat.bind( i18n ),
-		translate: i18n.translate.bind( i18n )
+		translate: i18n.translate.bind( i18n ),
 	};
 
 	return function( ComposedComponent ) {
 		var componentName = ComposedComponent.displayName || ComposedComponent.name || '';
 
-		var component = createClass({
+		var component = createClass( {
 			displayName: 'Localized(' + componentName + ')',
 
 			componentDidMount: function() {
@@ -34,11 +36,15 @@ module.exports = function( i18n ) {
 			},
 
 			render: function() {
-				var props = assign( {
-					locale: i18n.getLocaleSlug()
-				}, this.props, i18nProps );
+				var props = assign(
+					{
+						locale: i18n.getLocaleSlug(),
+					},
+					this.props,
+					i18nProps
+				);
 				return React.createElement( ComposedComponent, props );
-			}
+			},
 		} );
 		component._composedComponent = ComposedComponent;
 		return component;

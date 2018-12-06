@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+/** @prettier */
 
 /**
  * External dependencies/
@@ -17,7 +17,16 @@ var i18nCalypso = require( '../cli' );
 /**
  * Internal variables/
  */
-var keywords, format, projectName, outputFile, extras, arrayName, inputFiles, inputPaths, linesFile, lines;
+var keywords,
+	format,
+	projectName,
+	outputFile,
+	extras,
+	arrayName,
+	inputFiles,
+	inputPaths,
+	linesFile,
+	lines;
 
 function collect( val, memo ) {
 	memo.push( val );
@@ -33,11 +42,25 @@ program
 	.option( '-k, --keywords <keyword,keyword>', 'keywords of the translate function', list )
 	.option( '-f, --format <format>', 'format of the output (php or pot)' )
 	.option( '-o, --output-file <file>', 'output file for WP-style translation functions' )
-	.option( '-i, --input-file <filename>', 'files in which to search for translation methods', collect, [] )
+	.option(
+		'-i, --input-file <filename>',
+		'files in which to search for translation methods',
+		collect,
+		[]
+	)
 	.option( '-p, --project-name <name>', 'name of the project' )
-	.option( '-e, --extra <name>', 'Extra type of strings to add to the generated file (for now only `date` is available)' )
-	.option( '-l, --lines-filter <file>', 'Json file containing files and line numbers filters. Only included line numbers will be pased.' )
-	.option( '-a, --array-name <name>', 'name of variable in generated php file that contains array of method calls' )
+	.option(
+		'-e, --extra <name>',
+		'Extra type of strings to add to the generated file (for now only `date` is available)'
+	)
+	.option(
+		'-l, --lines-filter <file>',
+		'Json file containing files and line numbers filters. Only included line numbers will be pased.'
+	)
+	.option(
+		'-a, --array-name <name>',
+		'name of variable in generated php file that contains array of method calls'
+	)
 	.usage( '-o outputFile -i inputFile -f format [inputFile ...]' )
 	.on( '--help', function() {
 		console.log( '  Examples' );
@@ -52,8 +75,8 @@ outputFile = program.outputFile;
 arrayName = program.arrayName;
 projectName = program.projectName;
 linesFile = program.linesFilter;
-extras = Array.isArray( program.extra ) ? program.extra : ( program.extra ? [ program.extra ] : null );
-inputFiles = ( program.inputFile.length ) ? program.inputFile : program.args;
+extras = Array.isArray( program.extra ) ? program.extra : program.extra ? [ program.extra ] : null;
+inputFiles = program.inputFile.length ? program.inputFile : program.args;
 
 if ( inputFiles.length === 0 ) {
 	throw new Error( 'Error: You must enter the input file. Run `i18n-calypso -h` for examples.' );
@@ -72,11 +95,11 @@ if ( linesFile ) {
 		console.error( 'Error: linesFile, `' + linesFile + '`, does not exist' );
 	}
 
-	lines = JSON.parse( fs.readFileSync( linesFile, 'utf8') );
+	lines = JSON.parse( fs.readFileSync( linesFile, 'utf8' ) );
 	for ( var line in lines ) {
 		lines[ line ] = lines[ line ].map( String );
 		var modPath = path.relative( __dirname, line ).replace( /^[\/.]+/, '' );
-		if (  modPath !== line ) {
+		if ( modPath !== line ) {
 			lines[ modPath ] = lines[ line ];
 			delete lines[ line ];
 		}
@@ -91,7 +114,7 @@ var result = i18nCalypso( {
 	format: format,
 	extras: extras,
 	lines: lines,
-	projectName: projectName
+	projectName: projectName,
 } );
 
 if ( outputFile ) {
