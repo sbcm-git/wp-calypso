@@ -3,7 +3,7 @@
 /**
  * External dependencies/
  */
-var flatten = require( 'lodash.flatten' ),
+const flatten = require( 'lodash.flatten' ),
 	fs = require( 'fs' ),
 	globby = require( 'globby' ),
 	path = require( 'path' ),
@@ -12,12 +12,12 @@ var flatten = require( 'lodash.flatten' ),
 /**
  * Internal dependencies/
  */
-var i18nCalypso = require( '../cli' );
+const i18nCalypso = require( '../cli' );
 
 /**
  * Internal variables/
  */
-var keywords,
+let keywords,
 	format,
 	projectName,
 	outputFile,
@@ -96,9 +96,9 @@ if ( linesFile ) {
 	}
 
 	lines = JSON.parse( fs.readFileSync( linesFile, 'utf8' ) );
-	for ( var line in lines ) {
+	for ( const line in lines ) {
 		lines[ line ] = lines[ line ].map( String );
-		var modPath = path.relative( __dirname, line ).replace( /^[\/.]+/, '' );
+		const modPath = path.relative( __dirname, line ).replace( /^[\/.]+/, '' );
 		if ( modPath !== line ) {
 			lines[ modPath ] = lines[ line ];
 			delete lines[ line ];
@@ -106,7 +106,7 @@ if ( linesFile ) {
 	}
 }
 
-var result = i18nCalypso( {
+const result = i18nCalypso( {
 	keywords: keywords,
 	output: outputFile,
 	phpArrayName: arrayName,
