@@ -2,18 +2,19 @@
 /**
  * External dependencies
  */
-const assert = require( 'assert' ); // eslint-disable-line import/no-nodejs-modules
-const React = require( 'react' );
-const ReactDomServer = require( 'react-dom/server' );
+import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
+import React from 'react';
+import ReactDomServer from 'react-dom/server';
 
 /**
  * Internal dependencies
  */
-const data = require( './data' ),
-	i18n = require( '..' ),
-	moment = i18n.moment,
-	numberFormat = i18n.numberFormat,
-	translate = i18n.translate;
+import data from './data';
+import i18n from '../src';
+
+const moment = i18n.moment;
+const numberFormat = i18n.numberFormat;
+const translate = i18n.translate;
 
 /**
  * Pass in a react-generated html string to remove react-specific attributes

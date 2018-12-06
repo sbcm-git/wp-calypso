@@ -1,21 +1,22 @@
+/** @format */
+
 /**
  * External dependencies
+ *
  */
-const React = require( 'react' ),
-	setupEnzymeAdapter = require( 'enzyme-adapter-react-helper' ),
-	expect = require( 'chai' ).expect,
-	shallow = require( 'enzyme' ).shallow;
+import React from 'react';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-const localize = require( '..' ).localize,
-	emptyRender = function() { return null; };
-	i18n = require( '..' );
+import i18n, { localize } from '../src';
+
+const emptyRender = function() {
+	return null;
+};
 
 describe( 'localize()', function() {
-	setupEnzymeAdapter();
-
 	it( 'should be named using the variable name of the composed component', function() {
 		class MyComponent extends React.Component {
 			render() {
@@ -25,7 +26,7 @@ describe( 'localize()', function() {
 
 		const LocalizedComponent = localize( MyComponent );
 
-		expect( LocalizedComponent.displayName ).to.equal( 'Localized(MyComponent)' );
+		expect( LocalizedComponent.displayName ).toBe( 'Localized(MyComponent)' );
 	} );
 
 	it( 'should be named using the displayName of the composed component', function() {
@@ -34,7 +35,7 @@ describe( 'localize()', function() {
 
 		const LocalizedComponent = localize( MyComponent );
 
-		expect( LocalizedComponent.displayName ).to.equal( 'Localized(MyComponent)' );
+		expect( LocalizedComponent.displayName ).toBe( 'Localized(MyComponent)' );
 	} );
 
 	it( 'should be named using the name of the composed function component', function() {
@@ -42,7 +43,7 @@ describe( 'localize()', function() {
 
 		const LocalizedComponent = localize( MyComponent );
 
-		expect( LocalizedComponent.displayName ).to.equal( 'Localized(MyComponent)' );
+		expect( LocalizedComponent.displayName ).toBe( 'Localized(MyComponent)' );
 	} );
 
 	it( 'should provide translate, moment, locale and numberFormat props to rendered child', function() {
@@ -52,9 +53,9 @@ describe( 'localize()', function() {
 		const mounted = shallow( React.createElement( LocalizedComponent ) );
 		const props = mounted.find( MyComponent ).props();
 
-		expect( props.translate ).to.be.a( 'function' );
-		expect( props.moment ).to.be.a( 'function' );
-		expect( props.numberFormat ).to.be.a( 'function' );
-		expect( props.locale ).to.equal( i18n.getLocaleSlug() );
+		expect( props.translate ).toBeInstanceOf( Function );
+		expect( props.moment ).toBeInstanceOf( Function );
+		expect( props.numberFormat ).toBeInstanceOf( Function );
+		expect( props.locale ).toBe( i18n.getLocaleSlug() );
 	} );
 } );
