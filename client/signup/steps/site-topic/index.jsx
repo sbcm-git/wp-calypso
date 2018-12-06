@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { get, debounce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,8 +24,9 @@ import { getSignupStepsSiteTopic } from 'state/signup/steps/site-topic/selectors
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SignupActions from 'lib/signup/actions';
-import { hints } from 'lib/signup/hint-data';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 /**
  * Style dependencies
@@ -46,7 +48,7 @@ class SiteTopicStep extends Component {
 
 	constructor( props ) {
 		super( props );
-
+		this.setSuggestionsRef = React.createRef();
 		this.state = {
 			siteTopicValue: props.siteTopic || '',
 		};
@@ -59,20 +61,31 @@ class SiteTopicStep extends Component {
 	}
 
 	onSiteTopicChange = value => {
+		if ( value && value !== this.state.lastSearchValue && value.length === 3 ) {
+			this.props.requestVerticals( value );
+			this.setState( { lastSearchValue: value } );
+		}
 		this.setState( { siteTopicValue: value } );
 	};
 
 	onSubmit = event => {
 		event.preventDefault();
-
-		this.props.submitSiteTopic( this.trimedSiteTopicValue() );
+		this.props.submitSiteTopic( this.trimmedSiteTopicValue() );
 	};
 
-	trimedSiteTopicValue = () => this.state.siteTopicValue.trim();
+	hideSuggestions = () => this.setState( { siteTopicValue: '' } );
+
+	handleSearch = siteTopicValue => this.setState( { siteTopicValue } );
+
+	handleKeyDown = event => this.suggestionsRef.current.handleKeyEvent( event );
+
+	trimmedSiteTopicValue = () => this.state.siteTopicValue.trim();
+
+	getSuggestions = () => this.props.verticals.map( vertical => vertical.vertical_name );
 
 	renderContent( topicLabel, placeholder ) {
 		const { translate } = this.props;
-		const currentSiteTopic = this.trimedSiteTopicValue();
+		const currentSiteTopic = this.trimmedSiteTopicValue();
 
 		return (
 			<Card className="site-topic__content">
@@ -88,7 +101,7 @@ class SiteTopicStep extends Component {
 							id="siteTopic"
 							placeholder={ placeholder }
 							onChange={ this.onSiteTopicChange }
-							suggestions={ Object.values( hints ) }
+							suggestions={ this.getSuggestions() }
 							value={ currentSiteTopic }
 						/>
 					</FormFieldset>
@@ -145,6 +158,27 @@ class SiteTopicStep extends Component {
 	}
 }
 
+const REQUEST_VERTICALS_REQUEST_ID = 'signup-site-topic-vertical-request-id';
+
+function requestVerticalsHttpData( searchTerm ) {
+	return requestHttpData(
+		REQUEST_VERTICALS_REQUEST_ID,
+		http( {
+			apiNamespace: 'wpcom/v2',
+			method: 'GET',
+			path: '/verticals',
+			query: {
+				search: searchTerm,
+				limit: 5,
+			},
+		} ),
+		{
+			fromApi: () => data => [ [ 'results', data ] ],
+			freshness: -Infinity,
+		}
+	);
+}
+
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	submitSiteTopic: siteTopic => {
 		const { translate, flowName, stepName, goToNextStep } = ownProps;
@@ -169,14 +203,19 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 
 		goToNextStep( flowName );
 	},
+	requestVerticals: debounce( requestVerticalsHttpData, 500 ),
 } );
 
 export default localize(
 	connect(
-		state => ( {
-			siteTopic: getSignupStepsSiteTopic( state ),
-			siteType: getSiteType( state ),
-		} ),
+		state => {
+			const verticalsData = getHttpData( REQUEST_VERTICALS_REQUEST_ID );
+			return {
+				siteTopic: getSignupStepsSiteTopic( state ),
+				siteType: getSiteType( state ),
+				verticals: verticalsData.data || [],
+			};
+		},
 		mapDispatchToProps
 	)( SiteTopicStep )
 );
